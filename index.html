@@ -98,7 +98,7 @@
         }
 
         #btn-branco:active {
-            box-shadow: 0 2px #bbb;
+            box-shadow: 0 2px #383737;
             transform: translateY(4px);
         }
 
@@ -127,7 +127,7 @@
         #config-btn, #result-btn {
             position: absolute;
             top: 20px;
-            background-color: #555;
+            background-color: #2c2b2b;
             color: white;
             border: none;
             padding: 10px;
@@ -170,20 +170,32 @@
             cursor: pointer;
             padding: 10px;
         }
+
+        /* Ajustes para a imagem do candidato caber perfeitamente no espaço */
+        #foto-candidato {
+            width: 70%;
+            height: auto;
+            max-height: 200px; /* Limita a altura da imagem */
+            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 2px solid #333;
+        }
     </style>
 </head>
 <body>
     <button id="config-btn" onclick="toggleConfig()">
-        <i class="fas fa-cog"></i> <!-- Ícone de configuração -->
+        <i class="fas fa-cog"></i>
     </button>
 
     <button id="result-btn" onclick="solicitarSenhaResultado()">
-        <i class="fas fa-chart-bar"></i> <!-- Ícone de resultado -->
+        <i class="fas fa-chart-bar"></i>
     </button>
 
     <div class="urna-container">
         <div class="urna-screen">
-            <img src="urna.jpeg" alt="Justiça Eleitoral" style="width: 70%;">
+            <!-- Mantemos essa imagem e ela será trocada pela foto do candidato -->
+            <img id="foto-candidato" src="urna.jpeg" alt="Justiça Eleitoral">
             <p id="nome-candidato">Digite o número do candidato:</p>
             <input type="text" id="input-numero" maxlength="2" readonly>
         </div>
@@ -217,10 +229,10 @@
         <h2>Adicionar Candidato</h2>
         <input type="text" id="numero-candidato" placeholder="Número" maxlength="2">
         <input type="text" id="nome-candidato-input" placeholder="Nome do Candidato">
+        <input type="file" id="foto-candidato-input" accept="image/*">
         <button id="btn-add-candidate" onclick="solicitarSenhaAdicionar()">Adicionar</button>
     </div>
 
-    <!-- O som será tocado ao confirmar o voto -->
     <audio id="audio-confirma">
         <source src="urna.wav" type="audio/wav">
     </audio>
@@ -229,8 +241,8 @@
         let votos = {};
         let votoAtual = '';
         let votoBranco = 0;
-        const senhaAdicionar = "123";  // Senha para adicionar candidatos
-        const senhaResultado = "1234";  // Senha para mostrar o resultado
+        const senhaAdicionar = "123";
+        const senhaResultado = "1234";
 
         function addNumero(numero) {
             let input = document.getElementById('input-numero');
@@ -244,11 +256,14 @@
 
         function mostrarCandidato(numero) {
             let nomeCandidato = document.getElementById('nome-candidato');
+            let fotoCandidato = document.getElementById('foto-candidato');
             if (votos[numero]) {
                 nomeCandidato.textContent = `Número: ${numero} - Candidato: ${votos[numero].nome}`;
+                fotoCandidato.src = votos[numero].foto;  // Atualiza a foto do candidato
                 votoAtual = numero;
             } else {
                 nomeCandidato.textContent = 'Voto Nulo';
+                fotoCandidato.src = "urna.jpeg";  // Mantém a imagem original para votos nulos
                 votoAtual = 'nulo';
             }
         }
@@ -256,12 +271,14 @@
         function branco() {
             document.getElementById('input-numero').value = '';
             document.getElementById('nome-candidato').textContent = 'Voto em Branco';
+            document.getElementById('foto-candidato').src = "urna.jpeg";  // Mantém a imagem original
             votoAtual = 'branco';
         }
 
         function corrige() {
             document.getElementById('input-numero').value = '';
             document.getElementById('nome-candidato').textContent = '';
+            document.getElementById('foto-candidato').src = "urna.jpeg";  // Volta para a imagem original
             votoAtual = '';
         }
 
@@ -269,7 +286,6 @@
             if (votoAtual === 'branco') {
                 votoBranco++;
             } else if (votoAtual === 'nulo') {
-                // voto nulo não incrementa
             } else if (votos[votoAtual]) {
                 votos[votoAtual].votos++;
             }
@@ -331,20 +347,20 @@
         function adicionarCandidato() {
             let numero = document.getElementById('numero-candidato').value;
             let nome = document.getElementById('nome-candidato-input').value;
+            let foto = URL.createObjectURL(document.getElementById('foto-candidato-input').files[0]);
 
             if (numero.length === 2 && nome !== '') {
-                votos[numero] = { nome: nome, votos: 0 };
+                votos[numero] = { nome: nome, foto: foto, votos: 0 };
                 alert(`Candidato ${nome} com número ${numero} adicionado com sucesso!`);
             } else {
-                alert('Por favor, insira um número de 2 dígitos e um nome válido.');
+                alert('Por favor, insira um número de 2 dígitos, nome e uma foto válida.');
             }
 
-            // Limpar os campos
             document.getElementById('numero-candidato').value = '';
             document.getElementById('nome-candidato-input').value = '';
+            document.getElementById('foto-candidato-input').value = '';
         }
 
-        // Função para mostrar/ocultar a área de adicionar candidatos
         function toggleConfig() {
             const configSection = document.getElementById("config-section");
             if (configSection.style.display === "none" || configSection.style.display === "") {
@@ -355,7 +371,6 @@
         }
     </script>
 
-    <!-- Adicionando link para os ícones do Font Awesome -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>
