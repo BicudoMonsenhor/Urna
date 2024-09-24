@@ -81,26 +81,47 @@
             border: 2px solid #333;
             background-color: #333;
             color: white;
+            box-shadow: 0 5px #666;
+            transition: all 0.2s ease;
         }
 
-        .urna-keyboard button:hover {
-            background-color: #555;
+        .urna-keyboard button:active {
+            box-shadow: 0 2px #666;
+            transform: translateY(4px);
         }
 
         #btn-branco {
             background-color: white;
             color: black;
             border: 2px solid black;
+            box-shadow: 0 5px #bbb;
+        }
+
+        #btn-branco:active {
+            box-shadow: 0 2px #bbb;
+            transform: translateY(4px);
         }
 
         #btn-corrige {
             background-color: orange;
             color: white;
+            box-shadow: 0 5px #cc7a00;
+        }
+
+        #btn-corrige:active {
+            box-shadow: 0 2px #cc7a00;
+            transform: translateY(4px);
         }
 
         #btn-confirma {
             background-color: green;
             color: white;
+            box-shadow: 0 5px #004d00;
+        }
+
+        #btn-confirma:active {
+            box-shadow: 0 2px #004d00;
+            transform: translateY(4px);
         }
 
         #config-btn, #result-btn {
@@ -149,7 +170,6 @@
             cursor: pointer;
             padding: 10px;
         }
-
     </style>
 </head>
 <body>
